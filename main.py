@@ -36,7 +36,7 @@ def load_vgg(sess, vgg_path):
     vgg_layer7_out_tensor_name = 'layer7_out:0'
 
     # THIS FUNCTION IS DEPRECATED
-    tf.saved_model.loader.load(sess = sess, tags = [vgg_tag], export_dir = vgg_path)
+    tf.saved_model.loader.load(sess, [vgg_tag], vgg_path)
     # TODO how to know this model all
     # TODO how to visualize the graph?
     # TODO get_default_graph collect sess and model?
