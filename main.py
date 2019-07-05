@@ -64,8 +64,69 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     """
     # TODO: Implement function
     # TODO skip-layers? https://www.quora.com/What-is-skip-architecture-in-CNN
+    # 1x1 convolution of vgg layer 7
+    conv_layer_7_1x1 = tf.layers.conv2d(inputs = vgg_layer7_out,
+        filters = num_classes,
+        kernel_size = 1,
+        strides=1,
+        padding= 'same',
+        kernel_initializer= tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer= tf.contrib.layers.l2_regularizer(1e-3)
+    )
 
-
+    # will be replaced by tf.keras.layers.Conv2DTranspose
+    # (Transposed convolution layer (sometimes called Deconvolution))
+    deconv_layer_1_output = tf.layers.conv2d_transpose(
+        inputs = conv_layer_7_1x1,
+        filters = num_classes,
+        kernel_size = 4,
+        strides = 2,
+        padding = 'same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
+    )
+    # 1x1 convolution of vgg layer 4
+    conv_layer_4_1x1 = tf.layers.conv2d(
+        inputs=vgg_layer4_out,
+        filters=num_classes,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
+    )
+    # skip-layers
+    skip_connection_1 = tf.add(deconv_layer_1_output, conv_layer_4_1x1)
+    deconv_layer_2 = tf.layers.conv2d_transpose(
+        inputs=skip_connection_1,
+        filters=num_classes,
+        kernel_size=4,
+        strides=2,
+        padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
+    )
+    # 1x1 convolution of vgg layer 3
+    layer3_conv_1x1 = tf.layers.conv2d(
+        inputs=vgg_layer3_out,
+        filters=num_classes,
+        kernel_size=1,
+        strides=1,
+        padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
+    )
+    # skip-layers
+    skip_connection_2 = tf.add(deconv_layer_2, layer3_conv_1x1)
+    output_conv_layer = tf.layers.conv2d_transpose(
+        inputs=skip_connection_2,
+        filters=num_classes,
+        kernel_size=16,
+        strides=8,
+        padding='same',
+        kernel_initializer=tf.random_normal_initializer(stddev=0.01),
+        kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
+    )
     return layers_output
 tests.test_layers(layers)
 
