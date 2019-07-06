@@ -175,6 +175,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
+    sess.run(tf.global_variables_initializer())
     KEEP_PROB = 0.5
     LEARNING_RATE = 0.009
     losses = []
@@ -238,4 +239,5 @@ def run():
 
 
 if __name__ == '__main__':
+    print('run start ...')
     run()
