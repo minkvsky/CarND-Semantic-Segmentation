@@ -6,7 +6,8 @@ import warnings
 from distutils.version import LooseVersion
 import project_tests as tests
 
-
+# What is the difference between image segmentation, classification and detection?
+# https://www.quora.com/What-is-the-difference-between-image-segmentation-classification-and-detection
 # Check TensorFlow Version
 assert LooseVersion(tf.__version__) >= LooseVersion('1.0'), 'Please use TensorFlow version 1.0 or newer.  You are using {}'.format(tf.__version__)
 print('TensorFlow Version: {}'.format(tf.__version__))
@@ -96,6 +97,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
     )
     # skip-layers
+    # alias tf.math.add
     skip_connection_1 = tf.add(deconv_layer_1_output, conv_layer_4_1x1)
     deconv_layer_2 = tf.layers.conv2d_transpose(
         inputs=skip_connection_1,
@@ -141,6 +143,18 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     :return: Tuple of (logits, train_op, cross_entropy_loss)
     """
     # TODO: Implement function
+    # make logits a 2D tensor where each row represents a pixel and each column a class
+    # logits  https://www.zhihu.com/question/60751553
+    logits = tf.reshape(nn_last_layer, (-1, num_classes))
+    correct_label = tf.reshape(correct_label, (-1,num_classes))
+    # tf.math.reduce_mean
+    # define loss function
+    cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits= logits, labels= correct_label))
+    # define training operation
+    # https://zhuanlan.zhihu.com/p/27449596?utm_source=weibo&utm_medium=social
+    # https://zhuanlan.zhihu.com/p/32626442
+    optimizer = tf.train.AdamOptimizer(learning_rate= learning_rate)
+    train_op = optimizer.minimize(cross_entropy_loss)
 
     return logits, train_op, cross_entropy_loss
 tests.test_optimize(optimize)
