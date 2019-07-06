@@ -178,8 +178,8 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
-    KEEP_PROB = 0.8
-    LEARNING_RATE = 1e-4
+    KEEP_PROB = 0.5
+    LEARNING_RATE = 0.009
     losses = []
     for epoch in range(epochs):
         loss = None
