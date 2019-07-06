@@ -6,6 +6,7 @@ import warnings
 from distutils.version import LooseVersion
 import project_tests as tests
 import time
+from datetime import timedelta
 
 # What is the difference between image segmentation, classification and detection?
 # https://www.quora.com/What-is-the-difference-between-image-segmentation-classification-and-detection
