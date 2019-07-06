@@ -176,13 +176,27 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param learning_rate: TF Placeholder for learning rate
     """
     # TODO: Implement function
+    losses = []
+    for epoch in range(epochs):
+        loss = None
+        s_time = time.time()
+        for image, labels in get_batches_fn(batch_size):
+            _, loss = sess.run(
+                [train_op, cross_entropy_loss],
+                feed_dict={input_image: image,
+                           correct_label: labels,
+                           keep_prob: KEEP_PROB,
+                           learning_rate: LEARNING_RATE}
+            )
+            losses.append(loss)
+        print("[Epoch: {0}/{1} Loss: {2:4f} Time: {3}]".format(epoch + 1, epochs, loss,
+              str(timedelta(seconds=(time.time() - s_time)))))
 
-    pass
 tests.test_train_nn(train_nn)
 
 
 def run():
-    num_classes = 2
+    num_classes = 2 # TODO ?
     image_shape = (160, 576)  # KITTI dataset uses 160x576 images
     data_dir = './data'
     runs_dir = './runs'
@@ -214,12 +228,11 @@ def run():
 
         # TODO: Train NN using the train_nn function
         epochs = 50 # TODO how to select epoches ?
-        batch_size = # TODO together with learning rate ?
+        batch_size = 5 # TODO together with learning rate ?
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_loss, input_image,
                  correct_label, keep_prob, learning_rate)
         # TODO: Save inference data using helper.save_inference_samples
-        #  helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-        save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
         # OPTIONAL: Apply the trained model to a video
 
 
