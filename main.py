@@ -129,7 +129,7 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
         kernel_initializer=tf.random_normal_initializer(stddev=0.01),
         kernel_regularizer=tf.contrib.layers.l2_regularizer(1e-3)
     )
-    return layers_output
+    return output_conv_layer
 tests.test_layers(layers)
 
 
